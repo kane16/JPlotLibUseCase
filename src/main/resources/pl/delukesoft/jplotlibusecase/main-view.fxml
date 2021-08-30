@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<GridPane alignment="CENTER" prefHeight="768" prefWidth="1024" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.delukesoft.jplotlibusecase.MainController">
+<GridPane fx:id="pane" alignment="CENTER" prefHeight="768" prefWidth="1024" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.delukesoft.jplotlibusecase.MainController">
   <padding>
     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
   </padding>
@@ -15,9 +15,9 @@
       <font>
          <Font size="18.0" />
       </font></Label>
-   <Button mnemonicParsing="false" text="Upload data from CSV" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
-   <ChoiceBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
-   <LineChart GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="2">
+   <Button fx:id="uploadFileButton" onAction="#uploadCsv" mnemonicParsing="false" text="Upload data from CSV" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+   <ChoiceBox fx:id="aggregationType" prefWidth="150.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+   <LineChart fx:id="chart" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="2">
      <xAxis>
        <CategoryAxis side="BOTTOM" />
      </xAxis>
@@ -25,8 +25,8 @@
        <NumberAxis side="LEFT" />
      </yAxis>
    </LineChart>
-   <ChoiceBox disable="true" prefWidth="150.0" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
-   <ChoiceBox disable="true" prefWidth="150.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="TOP" />
+   <ChoiceBox fx:id="xField" disable="true" prefWidth="150.0" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
+   <ChoiceBox fx:id="yField" disable="true" prefWidth="150.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="TOP" />
    <columnConstraints>
       <ColumnConstraints prefWidth="250" />
       <ColumnConstraints prefWidth="250" />
