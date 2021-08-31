@@ -7,11 +7,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 
-public class MainController {
+public class MainController{
 
   @FXML
   private Label JPlotLibWelcomeLabel;
@@ -20,7 +19,10 @@ public class MainController {
   private Button uploadFileButton;
 
   @FXML
-  private ChoiceBox<String> aggregationType;
+  private ChoiceBox<String> aggregationTypeChoice;
+
+  @FXML
+  private ChoiceBox<String> plotTypeChoice;
 
   @FXML
   private LineChart<String, Number> chart;
@@ -34,6 +36,12 @@ public class MainController {
   @FXML
   private GridPane pane;
 
+  @FXML
+  public void initialize(){
+    plotTypeChoice.getItems().addAll("STANDARD", "AGGREGATION");
+    aggregationTypeChoice.getItems().addAll("AVG", "SUM", "MAX");
+  }
+
   public void uploadCsv(){
     FileChooser chooser = new FileChooser();
     chooser.setTitle("Choose CSV file");
@@ -42,6 +50,8 @@ public class MainController {
     if(file != null){
       System.out.printf("Chosen file: %s", file.getAbsolutePath());
       System.out.println();
+      plotTypeChoice.setDisable(false);
+      plotTypeChoice.setValue("STANDARD");
     }else {
       System.out.println("File has not been chosen");
     }
