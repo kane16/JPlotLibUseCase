@@ -9,6 +9,7 @@ version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 ext {
@@ -33,7 +34,9 @@ javafx {
 }
 
 dependencies {
+    implementation 'pl.delukesoft:jplotlib:1.0.1'
     implementation('org.controlsfx:controlsfx:11.1.0')
+    implementation 'org.projectlombok:lombok:1.18.20'
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
