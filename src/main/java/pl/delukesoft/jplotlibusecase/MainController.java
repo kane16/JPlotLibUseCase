@@ -51,6 +51,12 @@ public class MainController {
     aggregationTypeChoice.getItems().addAll("AVG", "SUM", "MAX");
   }
 
+  public void onPlotTypeChanged(){
+    System.out.println(plotTypeChoice.getValue());
+    aggregationTypeChoice.setVisible(plotTypeChoice.getValue()
+                                         .equals(PlotType.AGGREGATION.toString()));
+  }
+
   public void uploadCsv() {
     FileChooser chooser = new FileChooser();
     chooser.setTitle("Choose CSV file");
