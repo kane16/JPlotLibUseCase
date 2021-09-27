@@ -16,7 +16,7 @@
          <Font size="18.0" />
       </font></Label>
    <Button fx:id="uploadFileButton" mnemonicParsing="false" onAction="#uploadCsv" text="Upload data from CSV" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
-   <ChoiceBox fx:id="aggregationTypeChoice" prefWidth="150.0" visible="false" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+   <ChoiceBox fx:id="aggregationTypeChoice" onAction="#onAggregationChanged" prefWidth="150.0" visible="false" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
    <LineChart fx:id="chart" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="2">
      <xAxis>
        <CategoryAxis side="BOTTOM" />

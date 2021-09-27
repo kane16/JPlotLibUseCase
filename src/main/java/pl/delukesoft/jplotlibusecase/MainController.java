@@ -1,8 +1,10 @@
 package pl.delukesoft.jplotlibusecase;
 
+import static java.util.stream.Collectors.toList;
+
 import java.io.File;
 import java.util.Arrays;
-import java.util.stream.Collectors;
+import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.control.Button;
@@ -11,7 +13,9 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import pl.delukesoft.jplotlib.builder.PlotDataBuilder;
 import pl.delukesoft.jplotlib.model.enums.PlotType;
+import pl.delukesoft.jplotlib.plotops.functions.GroupingFunction;
 
 
 public class MainController {
@@ -42,19 +46,37 @@ public class MainController {
 
   @FXML
   public void initialize() {
-    plotTypeChoice.getItems()
-        .addAll(
-            Arrays.stream(PlotType.values())
-                    .map(PlotType::toString)
-                    .collect(Collectors.toList())
-        );
-    aggregationTypeChoice.getItems().addAll("AVG", "SUM", "MAX");
+    var plotTypes = Arrays.stream(PlotType.values())
+        .map(PlotType::toString)
+        .collect(toList());
+    var groupingFunctions = Arrays.stream(GroupingFunction.values())
+        .map(GroupingFunction::toString)
+        .collect(toList());
+    plotTypeChoice.getItems().addAll(plotTypes);
+    aggregationTypeChoice.getItems().addAll(groupingFunctions);
   }
 
-  public void onPlotTypeChanged(){
-    System.out.println(plotTypeChoice.getValue());
-    aggregationTypeChoice.setVisible(plotTypeChoice.getValue()
-                                         .equals(PlotType.AGGREGATION.toString()));
+  public void onPlotTypeChanged() {
+    if (plotTypeChoice.getValue().equals(PlotType.AGGREGATION.toString())) {
+      aggregationTypeChoice.setVisible(true);
+      if (aggregationTypeChoice.getValue() == null) {
+        xField.setDisable(true);
+        yField.setDisable(true);
+      } else {
+        xField.setDisable(false);
+        yField.setDisable(false);
+      }
+    } else {
+      aggregationTypeChoice.setVisible(false);
+      aggregationTypeChoice.setValue(null);
+      xField.setDisable(false);
+      yField.setDisable(false);
+    }
+  }
+
+  public void onAggregationChanged() {
+    xField.setDisable(false);
+    yField.setDisable(false);
   }
 
   public void uploadCsv() {
@@ -67,10 +89,14 @@ public class MainController {
       System.out.println();
       plotTypeChoice.setDisable(false);
       plotTypeChoice.setValue("STANDARD");
+      List<String> columns = PlotDataBuilder.builder()
+          .withFilePath(file.getAbsolutePath()).extractColumns();
+      xField.setDisable(false);
+      yField.setDisable(false);
+      xField.getItems().addAll(columns);
+      yField.getItems().addAll(columns);
     } else {
       System.out.println("File has not been chosen");
     }
   }
-
-
 }
