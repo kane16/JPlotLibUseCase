@@ -26,8 +26,8 @@
      </yAxis>
    </LineChart>
   <ChoiceBox fx:id="plotTypeChoice" onAction="#onPlotTypeChanged" disable="true" prefWidth="150.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
-  <ChoiceBox fx:id="xField" disable="true" prefWidth="150.0" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
-  <ChoiceBox fx:id="yField" disable="true" prefWidth="150.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="TOP" />
+  <ChoiceBox fx:id="xField" onAction="#onXFieldChanged" disable="true" prefWidth="150.0" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
+  <ChoiceBox fx:id="yField" onAction="#onYFieldChanged" disable="true" prefWidth="150.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="TOP" />
    <columnConstraints>
       <ColumnConstraints prefWidth="250" />
       <ColumnConstraints prefWidth="250" />
