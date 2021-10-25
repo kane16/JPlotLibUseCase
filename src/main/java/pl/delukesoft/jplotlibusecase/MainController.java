@@ -2,12 +2,15 @@ package pl.delukesoft.jplotlibusecase;
 
 import static java.util.stream.Collectors.toList;
 
+import com.jfoenix.controls.JFXSnackbar;
+import com.jfoenix.controls.JFXSnackbar.SnackbarEvent;
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import javafx.fxml.FXML;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
@@ -18,9 +21,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.util.Duration;
 import pl.delukesoft.jplotlib.builder.PlotDataBuilder;
+import pl.delukesoft.jplotlib.exception.InvalidPlotTypeProvided;
 import pl.delukesoft.jplotlib.model.enums.ColumnType;
 import pl.delukesoft.jplotlib.model.enums.PlotType;
 import pl.delukesoft.jplotlib.model.input.PlotInfo;
@@ -42,14 +48,14 @@ public class MainController {
   @FXML
   private ChoiceBox<String> plotTypeChoice;
   @FXML
-  private LineChart<String, Number> chart = new LineChart<String, Number>(xAxis, yAxis);
-  ;
+  private LineChart<String, Number> chart = new LineChart<>(xAxis, yAxis);
   @FXML
   private ChoiceBox<String> xField;
   @FXML
   private ChoiceBox<String> yField;
   @FXML
   private GridPane pane;
+  private JFXSnackbar snackbar;
   private Map<String, FieldState> availableFieldsMap;
   private String filePath;
 
@@ -61,6 +67,7 @@ public class MainController {
     var groupingFunctions = Arrays.stream(GroupingFunction.values())
         .map(GroupingFunction::toString)
         .collect(toList());
+    snackbar = new JFXSnackbar(pane);
     plotTypeChoice.getItems().addAll(plotTypes);
     aggregationTypeChoice.getItems().addAll(groupingFunctions);
   }
@@ -81,11 +88,17 @@ public class MainController {
       xField.setDisable(false);
       yField.setDisable(false);
     }
+    if (xField.getValue() != null && yField.getValue() != null) {
+      drawChartWhenFieldsChosen();
+    }
   }
 
   public void onAggregationChanged() {
     xField.setDisable(false);
     yField.setDisable(false);
+    if (xField.getValue() != null && yField.getValue() != null) {
+      drawChartWhenFieldsChosen();
+    }
   }
 
   public void uploadCsv() {
@@ -128,7 +141,7 @@ public class MainController {
   public void onXFieldChanged() {
     refreshItems();
     adjustColumnsForComboBox(yField);
-    if (xField != null && yField != null) {
+    if (xField.getValue() != null && yField.getValue() != null) {
       drawChartWhenFieldsChosen();
     }
   }
@@ -136,7 +149,7 @@ public class MainController {
   public void onYFieldChanged() {
     refreshItems();
     adjustColumnsForComboBox(xField);
-    if (xField != null && yField != null) {
+    if (xField.getValue() != null && yField.getValue() != null) {
       drawChartWhenFieldsChosen();
     }
   }
@@ -154,23 +167,41 @@ public class MainController {
   private void drawChartWhenFieldsChosen() {
     String xFieldName = xField.getValue();
     String yFieldName = yField.getValue();
-    PlotInfo plotInfo = new PlotInfo(
-        PlotType.STANDARD,
+    PlotType plotType = PlotType.valueOf(plotTypeChoice.getValue());
+    Optional<GroupingFunction> aggregation = Optional.ofNullable(aggregationTypeChoice.getValue())
+        .map(GroupingFunction::valueOf);
+    PlotInfo plotInfo = aggregation.map(groupingFunction -> new PlotInfo(
+        plotType,
+        new SeriesInfo(xFieldName, ColumnType.STRING),
+        new SeriesInfo(yFieldName, ColumnType.INTEGER),
+        groupingFunction
+    )).orElse(new PlotInfo(
+        plotType,
         new SeriesInfo(xFieldName, ColumnType.STRING),
         new SeriesInfo(yFieldName, ColumnType.INTEGER)
-    );
-    PlotData plotData = PlotDataBuilder.builder()
-        .withFilePath(filePath)
-        .withPlotInfo(plotInfo)
-        .build();
-    XYChart.Series<String, Number> dataSeries = new Series<>();
-    for (Entry<String, List<Number>> entry : plotData.getArgsWithValuesMap().entrySet()) {
-      dataSeries.getData()
-          .add(new XYChart.Data<>(entry.getKey(), entry.getValue().get(0)));
+    ));
+    try {
+      PlotData plotData = PlotDataBuilder.builder()
+          .withFilePath(filePath)
+          .withPlotInfo(plotInfo)
+          .build();
+      XYChart.Series<String, Number> dataSeries = new Series<>();
+      for (Entry<String, List<Number>> entry : plotData.getArgsWithValuesMap().entrySet()) {
+        dataSeries.getData()
+            .add(new XYChart.Data<>(entry.getKey(), entry.getValue().get(0)));
+      }
+      dataSeries.setName("Name");
+      chart.getData().clear();
+      chart.getData().addAll(dataSeries);
+      chart.setAnimated(false);
+    } catch (InvalidPlotTypeProvided invalidPlotTypeProvided) {
+      Label label = new Label("Invalid Plot type provided");
+      label.setPrefHeight(50.0);
+      label.setTextFill(Color.RED);
+      SnackbarEvent event = new SnackbarEvent(label, Duration.seconds(2L), null);
+      snackbar.enqueue(event);
+      System.out.println("Couldn't draw chart, invalid plot type");
     }
-    dataSeries.setName("Name");
-    chart.getData().clear();
-    chart.getData().addAll(dataSeries);
 
   }
 

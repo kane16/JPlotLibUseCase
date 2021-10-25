@@ -37,6 +37,7 @@ dependencies {
     implementation 'pl.delukesoft:jplotlib:1.0.3'
     implementation('org.controlsfx:controlsfx:11.1.0')
     implementation 'org.projectlombok:lombok:1.18.20'
+    implementation 'com.jfoenix:jfoenix:9.0.10'
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
